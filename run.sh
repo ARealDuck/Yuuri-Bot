@@ -22,9 +22,7 @@ fi
 echo  "Setting up virtual environment..."
 source "$VENV/bin/activate"
 
-#run auto update loop for the bot.
-while true
-do
+#Update bot
   echo "Updating Yuuri Bot..."
   git pull
   REQ_HASH_FILE="$VENV/.req_hash"
@@ -43,8 +41,4 @@ do
   fi
 
   echo "Bot is starting..."
-  python3 main.py
-
-  echo "Bot has stopped. Most likely due to an update, Restarting in 3 seconds."
-  sleep 3
-  done
+  exec python3 main.py
