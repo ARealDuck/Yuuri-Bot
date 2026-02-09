@@ -38,6 +38,7 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 TOKEN = os.getenv("YUURI_TOKEN")
 intents = discord.Intents.default()
+intents.guilds = True
 intents.members = True
 intents.message_content = True
 intents.voice_states = True
@@ -53,6 +54,7 @@ if TOKEN is None:
 @bot.event
 async def on_ready():
 
+    logger.debug(f"Guilds cached: {[g.name for g in bot.guilds]}")
     logger.info(f"Logged in as {bot.user}")
     now = time.time()
     logger.info("Setting up time DB after restart.")
