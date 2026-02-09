@@ -72,9 +72,11 @@ async def on_ready():
     if hasattr(bot, "vc_ready"):
         return
     bot.vc_ready = True
+    logger.info("Not currently in a voice channel.")
     if guild.voice_client:
+        logger.error("Already in a voice channel! this is an error if you just recently restarted!")
         return  # already connected.
-    await channel.connect()
+    await channel.connect(TRACKED_CHANNEL_ID)
     logger.info(f"Joined voice channel! {channel.name}")
 
 @bot.event  # Tracking sleep channel contributors.
