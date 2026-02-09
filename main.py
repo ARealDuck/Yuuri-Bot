@@ -53,9 +53,16 @@ if TOKEN is None:
 
 @bot.event
 async def on_ready():
+    # stop double execution
+    if hasattr(bot, "vc_ready"):
+        logger.debug("on_ready already ran once - Skipping...")
+        return
+    bot.vc_ready = True
 
     logger.debug(f"Guilds cached: {[g.name for g in bot.guilds]}")
     logger.info(f"Logged in as {bot.user}")
+
+    # DB reset
     now = time.time()
     logger.info("Setting up time DB after restart.")
     cursor.execute("SELECT user_id, guild_id FROM voice_sessions")
@@ -67,20 +74,20 @@ async def on_ready():
                 WHERE user_id=? AND guild_id=?
             """, (now, user_id, guild_id))
     db.commit()
+
+    # Guilds
     logger.info("Syncing commands.")
     guild = bot.get_guild(id=TEST_GUILD_ID)
     if not guild:
         logger.error("Guild not found in cache")
         return
+
+    # Syncing commands
     bot.tree.copy_global_to(guild=guild)
     await bot.tree.sync(guild=guild)
     logger.info("Slash commands synced")
-    # stop double execution
-    if hasattr(bot, "vc_ready"):
-        return
-    bot.vc_ready = True
 
-    # Get voice channel
+    # Get voice channel and log in
     logger.debug("Getting Channel.")
     channel = guild.get_channel(TRACKED_CHANNEL_ID)
     if not channel:
