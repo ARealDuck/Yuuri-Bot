@@ -100,7 +100,10 @@ async def on_ready():
         return
     logger.debug("Channel is in fact a voice channel! Moving to next step.")
     logger.info(f"Attempting to join {channel.name}")
-    await channel.connect()
+    try:
+        await channel.connect()
+    except Exception as e:
+        logger.exception("Failed to connect to voice channel!")
     logger.info(f"Joined voice channel! {channel.name}")
 
 @bot.event  # Tracking sleep channel contributors.
