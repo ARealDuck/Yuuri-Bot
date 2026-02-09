@@ -11,6 +11,7 @@ intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 TEST_GUILD_ID = 939897099024203778
+test_guild = discord.Object(id=TEST_GUILD_ID)
 
 if TOKEN is None:
     raise RuntimeError("RUNTIME ERROR CODE1: Discord Token not found in the environment variable!")
@@ -25,7 +26,7 @@ async def on_ready():
 
     print("Slash commands synced")
 
-bot.tree.command(name="Force Restart", description='For if Yuuri misbehaves.')
+@bot.tree.command(name="Force Restart", description='For if Yuuri misbehaves.', guild=test_guild)
 async def force_restart(interaction: discord.Interaction):
     if not await bot.is_owner(interaction.user):
         await interaction.response.send_message("Hey! Watch it! You cant tell me what to do!", ephemeral=True)
