@@ -169,7 +169,7 @@ async def force_restart(interaction: discord.Interaction):
     await bot.close()
     raise SystemExit(0)
 
-@bot.tree.command(name="afk_time", description="Show total afk times")
+@bot.tree.command(name="afk_time", description="Show total afk times (CURRENTLY BROKEN.)")
 async def vc_time(interaction: discord.Interaction):
     cursor.execute("""
             SELECT total_seconds FROM voice_totals
