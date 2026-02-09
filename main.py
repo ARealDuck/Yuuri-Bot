@@ -55,6 +55,7 @@ async def on_ready():
 
     logger.info(f"Logged in as {bot.user}")
     now = time.time()
+    logger.info("Setting up time DB after restart.")
     cursor.execute("SELECT user_id, guild_id FROM voice_sessions")
     sessions = cursor.fetchall()
     for user_id, guild_id in sessions:
@@ -64,20 +65,32 @@ async def on_ready():
                 WHERE user_id=? AND guild_id=?
             """, (now, user_id, guild_id))
     db.commit()
-    guild = discord.Object(id=TEST_GUILD_ID)
+    logger.info("Syncing commands.")
+    guild = bot.get_guild(id=TEST_GUILD_ID)
+    if not guild:
+        logger.error("Guild not found in cache")
+        return
     bot.tree.copy_global_to(guild=guild)
     await bot.tree.sync(guild=guild)
     logger.info("Slash commands synced")
-    channel = guild.get_channel(TRACKED_CHANNEL_ID)
-    logger.info(f"Got sleep channel id {channel}")
+    # stop double execution
     if hasattr(bot, "vc_ready"):
         return
     bot.vc_ready = True
-    logger.info("Not currently in a voice channel.")
-    if guild.voice_client:
-        logger.error("Already in a voice channel! this is an error if you just recently restarted!")
-        return  # already connected.
-    logger.info("attempting to join sleep channel")
+
+    # Get voice channel
+    logger.debug("Getting Channel.")
+    channel = guild.get_channel(TRACKED_CHANNEL_ID)
+    if not channel:
+        logger.error("Channel not found!")
+        return
+    logger.debug(f"Got channel! {channel.name}. Moving to next step.")
+    logger.debug("Checking if channel is a voice channel.")
+    if not isinstance(channel, discord.VoiceChannel):
+        logger.error("Channel is not a voice channel! please check if channel id is pointing to the right channel!")
+        return
+    logger.debug("Channel is in fact a voice channel! Moving to next step.")
+    logger.info(f"Attempting to join {channel.name}")
     await channel.connect()
     logger.info(f"Joined voice channel! {channel.name}")
 
