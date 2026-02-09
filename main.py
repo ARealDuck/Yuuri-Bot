@@ -69,6 +69,7 @@ async def on_ready():
     await bot.tree.sync(guild=guild)
     logger.info("Slash commands synced")
     channel = guild.get_channel(TRACKED_CHANNEL_ID)
+    logger.info(f"Got sleep channel id {channel}")
     if hasattr(bot, "vc_ready"):
         return
     bot.vc_ready = True
@@ -77,7 +78,7 @@ async def on_ready():
         logger.error("Already in a voice channel! this is an error if you just recently restarted!")
         return  # already connected.
     logger.info("attempting to join sleep channel")
-    await channel.connect(TRACKED_CHANNEL_ID)
+    await channel.connect()
     logger.info(f"Joined voice channel! {channel.name}")
 
 @bot.event  # Tracking sleep channel contributors.
