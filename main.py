@@ -26,7 +26,7 @@ async def on_ready():
 
     print("Slash commands synced")
 
-@bot.tree.command(name="Force Restart", description='For if Yuuri misbehaves.', guild=test_guild)
+@bot.tree.command(name="Force_Restart", description='For if Yuuri misbehaves.', guild=test_guild)
 async def force_restart(interaction: discord.Interaction):
     if not await bot.is_owner(interaction.user):
         await interaction.response.send_message("Hey! Watch it! You cant tell me what to do!", ephemeral=True)
