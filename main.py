@@ -42,7 +42,7 @@ intents.members = True
 intents.message_content = True
 intents.voice_states = True
 bot = commands.Bot(command_prefix="!", intents=intents, owner_id=94590628721070080)
-TEST_GUILD_ID = 939897099024203778
+TEST_GUILD_ID = 1140737209436209352
 test_guild = discord.Object(id=TEST_GUILD_ID)
 TRACKED_CHANNEL_ID = 1470424640470908969
 voice_times = {}
