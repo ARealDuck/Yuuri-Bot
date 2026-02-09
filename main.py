@@ -77,7 +77,7 @@ async def on_ready():
 
     # Guilds
     logger.info("Syncing commands.")
-    guild = bot.get_guild(id=TEST_GUILD_ID)
+    guild = bot.get_guild(TEST_GUILD_ID)
     if not guild:
         logger.error("Guild not found in cache")
         return
