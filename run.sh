@@ -13,7 +13,7 @@ exec >> "$LOG_FILE" 2>&1
 cd "$BOT_DIR"
 
 #create Venv environment if it does not exist.
-if [ ! -d "$VENV"]; then
+if [ ! -d "$VENV" ]; then
   echo "VENV not found creating new venv environment."
   python3 -m venv "$VENV"
 fi

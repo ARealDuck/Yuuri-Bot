@@ -15,7 +15,7 @@ TEST_GUILD_ID = 939897099024203778
 if TOKEN is None:
     raise RuntimeError("RUNTIME ERROR CODE1: Discord Token not found in the environment variable!")
 
-bot.event()
+@bot.event()
 async def on_ready():
     print(f"Logged in as {bot.user}")
 
