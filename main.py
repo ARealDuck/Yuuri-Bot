@@ -76,6 +76,7 @@ async def on_ready():
     if guild.voice_client:
         logger.error("Already in a voice channel! this is an error if you just recently restarted!")
         return  # already connected.
+    logger.info("attempting to join sleep channel")
     await channel.connect(TRACKED_CHANNEL_ID)
     logger.info(f"Joined voice channel! {channel.name}")
 
