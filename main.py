@@ -30,6 +30,7 @@ db.commit()
 # Settings you can change are here
 GUILD_ID = 1140737209436209352  # Server you want the bot to be in.
 TRACKED_CHANNEL_ID = 1470424640470908969  # voice channel in said server you want the bot to sleep in
+OWNER_ID = 94590628721070080 # Set to your user id if for commands that require owner level to work.
 file_handler = logging.FileHandler("yuuribot.log")  # file name for the log
 # set up bot variables and settings
 logger = logging.getLogger("YuuriBot")
@@ -44,7 +45,7 @@ intents.guilds = True
 intents.members = True
 intents.message_content = True
 intents.voice_states = True
-bot = commands.Bot(command_prefix="!", intents=intents, owner_id=94590628721070080)
+bot = commands.Bot(command_prefix="!", intents=intents, owner_id=OWNER_ID)
 test_guild = discord.Object(id=GUILD_ID)
 voice_times = {}
 if TOKEN is None:
@@ -176,11 +177,14 @@ async def on_voice_state_update(member, before, after):
 
 @bot.tree.command(name="restart_yuuri", description='For if Yuuri misbehaves.', guild=test_guild)
 async def force_restart(interaction: discord.Interaction):
-    logger.debug("caught force restart command.")
+    logger.debug("Caught force restart command.")
     await interaction.response.defer(ephemeral=True)
+    logger.debug("Checking if user is an owner.")
     if not await bot.is_owner(interaction.user):
+        logger.debug("User is not owner.")
         await interaction.followup.send("Hey! Watch it! You cant tell me what to do!", ephemeral=True)
         return
+    logger.debug("User is owner.")
     await interaction.followup.send("Oh alright Ill do as you say.", ephemeral=True)
     await asyncio.sleep(0.2)
     await bot.close()
