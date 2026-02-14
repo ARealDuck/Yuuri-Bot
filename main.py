@@ -6,7 +6,7 @@ import time
 import sqlite3
 import discord
 from discord import app_commands
-from discord.ext import commands
+from discord.ext import commands, tasks
 
 db = sqlite3.connect("voice_time.db")
 cursor = db.cursor()
@@ -27,11 +27,13 @@ CREATE TABLE IF NOT EXISTS voice_totals (
 )
 """)
 db.commit()
-
+# Settings you can change are here
+GUILD_ID = 1140737209436209352  # Server you want the bot to be in.
+TRACKED_CHANNEL_ID = 1470424640470908969  # voice channel in said server you want the bot to sleep in
+file_handler = logging.FileHandler("yuuribot.log")  # file name for the log
 # set up bot variables and settings
 logger = logging.getLogger("YuuriBot")
 logger.setLevel(logging.DEBUG)
-file_handler = logging.FileHandler("yuuribot.log")
 file_handler.setLevel(logging.DEBUG)
 formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] %(message)s')
 file_handler.setFormatter(formatter)
@@ -43,13 +45,27 @@ intents.members = True
 intents.message_content = True
 intents.voice_states = True
 bot = commands.Bot(command_prefix="!", intents=intents, owner_id=94590628721070080)
-TEST_GUILD_ID = 1140737209436209352
-test_guild = discord.Object(id=TEST_GUILD_ID)
-TRACKED_CHANNEL_ID = 1470424640470908969
+test_guild = discord.Object(id=GUILD_ID)
 voice_times = {}
 if TOKEN is None:
     raise RuntimeError("RUNTIME ERROR CODE1: Discord Token not found in the environment variable!")
+@tasks.loop(seconds=60)
+async def check_voice_connection():
+    logger.info("Checking if Bot has been disconnected from the tracked channel...")
+    guild = bot.get_guild(GUILD_ID)
+    if guild is None:
+        logger.error("Server is not found! this could be due to discord servers being down!")
+        return
 
+    voice_client = guild.voice_client
+
+    # if not connected, reconnect.
+    if voice_client is None or not voice_client.is_connected():
+        channel = guild.get_channel(TRACKED_CHANNEL_ID)
+        logger.info(f"Bot is in fact not no longer connected to {channel.name}! attempting to reconnect...")
+        if channel and isinstance(channel, discord.VoiceChannel):
+            await channel.connect()
+            logger.debug(f"Successfully reconnected to {channel.name}")
 
 @bot.event
 async def on_ready():
@@ -77,7 +93,7 @@ async def on_ready():
 
     # Guilds
     logger.info("Syncing commands.")
-    guild = bot.get_guild(TEST_GUILD_ID)
+    guild = bot.get_guild(GUILD_ID)
     if not guild:
         logger.error("Guild not found in cache")
         return
@@ -105,6 +121,7 @@ async def on_ready():
     except Exception as e:
         logger.exception("Failed to connect to voice channel!")
     logger.info(f"Joined voice channel! {channel.name}")
+    check_voice_connection.start()
 
 @bot.event  # Tracking sleep channel contributors.
 async def on_voice_state_update(member, before, after):
