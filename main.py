@@ -190,7 +190,7 @@ async def force_restart(interaction: discord.Interaction):
     await bot.close()
     raise SystemExit(0)
 
-@bot.tree.command(name="afk_time", description="Show total afk times (CURRENTLY BROKEN.)")
+@bot.tree.command(name="afk_time", description="Show total afk times (WORK IN PROGRESS.)")
 async def vc_time(interaction: discord.Interaction):
     cursor.execute("""
             SELECT total_seconds FROM voice_totals
@@ -204,7 +204,7 @@ async def vc_time(interaction: discord.Interaction):
     minutes = (total % 3600) // 60
 
     await interaction.response.send_message(
-        f"You’ve spent **{int(hours)}h {int(minutes)}m** in voice.",
+        f"You’ve slept a total of **{int(hours)}h {int(minutes)}m** in the sleep channel.",
         ephemeral=True
     )
 
