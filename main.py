@@ -50,23 +50,23 @@ test_guild = discord.Object(id=GUILD_ID)
 voice_times = {}
 if TOKEN is None:
     raise RuntimeError("RUNTIME ERROR CODE1: Discord Token not found in the environment variable!")
-@tasks.loop(seconds=60)
-async def check_voice_connection():
-    logger.info("Checking if Bot has been disconnected from the tracked channel...")
-    guild = bot.get_guild(GUILD_ID)
-    if guild is None:
-        logger.error("Server is not found! this could be due to discord servers being down!")
-        return
-
-    voice_client = guild.voice_client
-
-    # if not connected, reconnect.
-    if voice_client is None or not voice_client.is_connected():
-        channel = guild.get_channel(TRACKED_CHANNEL_ID)
-        logger.info(f"Bot is in fact not no longer connected to {channel.name}! attempting to reconnect...")
-        if channel and isinstance(channel, discord.VoiceChannel):
-            await channel.connect()
-            logger.debug(f"Successfully reconnected to {channel.name}")
+#@tasks.loop(seconds=60)
+#async def check_voice_connection():
+#    logger.info("Checking if Bot has been disconnected from the tracked channel...")
+#    guild = bot.get_guild(GUILD_ID)
+#    if guild is None:
+#        logger.error("Server is not found! this could be due to discord servers being down!")
+#        return
+#
+#    voice_client = guild.voice_client
+#
+#    # if not connected, reconnect.
+#    if voice_client is None or not voice_client.is_connected():
+#        channel = guild.get_channel(TRACKED_CHANNEL_ID)
+#        logger.info(f"Bot is in fact not no longer connected to {channel.name}! attempting to reconnect...")
+#        if channel and isinstance(channel, discord.VoiceChannel):
+#            await channel.connect()
+#            logger.debug(f"Successfully reconnected to {channel.name}")
 
 @bot.event
 async def on_ready():
@@ -105,24 +105,24 @@ async def on_ready():
     logger.info("Slash commands synced")
 
     # Get voice channel and log in
-    logger.debug("Getting Channel.")
-    channel = guild.get_channel(TRACKED_CHANNEL_ID)
-    if not channel:
-        logger.error("Channel not found!")
-        return
-    logger.debug(f"Got channel! {channel.name}. Moving to next step.")
-    logger.debug("Checking if channel is a voice channel.")
-    if not isinstance(channel, discord.VoiceChannel):
-        logger.error("Channel is not a voice channel! please check if channel id is pointing to the right channel!")
-        return
-    logger.debug("Channel is in fact a voice channel! Moving to next step.")
-    logger.info(f"Attempting to join {channel.name}")
-    try:
-        await channel.connect()
-    except Exception as e:
-        logger.exception("Failed to connect to voice channel!")
-    logger.info(f"Joined voice channel! {channel.name}")
-    check_voice_connection.start()
+    #logger.debug("Getting Channel.")
+    #channel = guild.get_channel(TRACKED_CHANNEL_ID)
+    #if not channel:
+    #    logger.error("Channel not found!")
+    #    return
+    #logger.debug(f"Got channel! {channel.name}. Moving to next step.")
+    #logger.debug("Checking if channel is a voice channel.")
+    #if not isinstance(channel, discord.VoiceChannel):
+    #    logger.error("Channel is not a voice channel! please check if channel id is pointing to the right channel!")
+    #    return
+    #logger.debug("Channel is in fact a voice channel! Moving to next step.")
+    #logger.info(f"Attempting to join {channel.name}")
+    #try:
+    #    await channel.connect()
+    #except Exception as e:
+     #   logger.exception("Failed to connect to voice channel!")
+    #logger.info(f"Joined voice channel! {channel.name}")
+   # check_voice_connection.start()
 
 @bot.event  # Tracking sleep channel contributors.
 async def on_voice_state_update(member, before, after):
